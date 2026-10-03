@@ -1,4 +1,4 @@
-//! Shared fixtures for the simd kernel tests.
+//! Shared fixtures for unit tests.
 
 use burn_backend::{Element, ElementConversion};
 use ndarray::{Array4, ArrayD, IxDyn, ShapeBuilder};

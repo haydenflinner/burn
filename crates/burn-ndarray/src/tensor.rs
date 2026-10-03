@@ -765,62 +765,50 @@ mod tests {
         ops::{FloatTensorOps, QTensorOps},
         quantization::{QuantStore, QuantValue, QuantizationParametersPrimitive},
     };
-    use burn_std::rand::get_seeded_rng;
+    use burn_std::{Bytes, rand::get_seeded_rng};
 
-    #[test]
-    fn should_support_into_and_from_data_1d() {
-        let data_expected = TensorData::random::<f32, _, _>(
-            Shape::new([3]),
-            Distribution::Default,
-            &mut get_seeded_rng(),
-        );
-        let tensor = NdArrayTensor::from_data(data_expected.clone());
+    /// `TensorData` for the canonical `[2, 2]` f32 buffer `1.0..=4.0`.
+    fn f32_tensor_data() -> TensorData {
+        TensorData::from_bytes(
+            Bytes::from_elems(vec![1.0f32, 2.0, 3.0, 4.0]),
+            Shape::new([2, 2]),
+            DType::F32,
+        )
+    }
 
-        let data_actual = tensor.into_data();
+    /// The same buffer tagged as non-native, simulating burnpack/mmap data.
+    fn non_native_tensor_data() -> TensorData {
+        let bytes = Bytes::from_elems(vec![1.0f32, 2.0, 3.0, 4.0]);
+        TensorData::from_bytes(
+            Bytes::from_shared(
+                bytes::Bytes::copy_from_slice(&bytes),
+                burn_backend::AllocationProperty::Other,
+            ),
+            Shape::new([2, 2]),
+            DType::F32,
+        )
+    }
 
-        assert_eq!(data_expected, data_actual);
+    /// Borrow the `NdArrayStorage` inside an F32 tensor variant.
+    fn f32_storage(tensor: &NdArrayTensor) -> &NdArrayStorage<f32> {
+        let NdArrayTensor::F32(storage) = tensor else {
+            panic!("expected F32 tensor")
+        };
+        storage
     }
 
     #[test]
-    fn should_support_into_and_from_data_2d() {
-        let data_expected = TensorData::random::<f32, _, _>(
-            Shape::new([2, 3]),
-            Distribution::Default,
-            &mut get_seeded_rng(),
-        );
-        let tensor = NdArrayTensor::from_data(data_expected.clone());
+    fn should_support_into_and_from_data() {
+        for dims in [&[3][..], &[2, 3], &[2, 3, 4], &[2, 3, 4, 2]] {
+            let data_expected = TensorData::random::<f32, _, _>(
+                Shape::from(dims),
+                Distribution::Default,
+                &mut get_seeded_rng(),
+            );
+            let tensor = NdArrayTensor::from_data(data_expected.clone());
 
-        let data_actual = tensor.into_data();
-
-        assert_eq!(data_expected, data_actual);
-    }
-
-    #[test]
-    fn should_support_into_and_from_data_3d() {
-        let data_expected = TensorData::random::<f32, _, _>(
-            Shape::new([2, 3, 4]),
-            Distribution::Default,
-            &mut get_seeded_rng(),
-        );
-        let tensor = NdArrayTensor::from_data(data_expected.clone());
-
-        let data_actual = tensor.into_data();
-
-        assert_eq!(data_expected, data_actual);
-    }
-
-    #[test]
-    fn should_support_into_and_from_data_4d() {
-        let data_expected = TensorData::random::<f32, _, _>(
-            Shape::new([2, 3, 4, 2]),
-            Distribution::Default,
-            &mut get_seeded_rng(),
-        );
-        let tensor = NdArrayTensor::from_data(data_expected.clone());
-
-        let data_actual = tensor.into_data();
-
-        assert_eq!(data_expected, data_actual);
+            assert_eq!(data_expected, tensor.into_data());
+        }
     }
 
     #[test]
@@ -849,90 +837,47 @@ mod tests {
         );
     }
 
-    // ==========================================================================
-    // Zero-copy integration tests
-    // These tests verify end-to-end zero-copy behavior through NdArrayTensor.
-    // ==========================================================================
-
     #[test]
     fn zero_copy_creates_borrowed_storage_for_non_native() {
         // Verify that from_data creates borrowed storage for non-native allocations
         // (e.g. burnpack mmap/file data tagged with AllocationProperty::Other or File).
         // Native heap allocations intentionally use Owned storage for performance.
-        use burn_backend::AllocationProperty;
-        use burn_std::Bytes;
+        let tensor = NdArrayTensor::from_data(non_native_tensor_data());
+        let storage = f32_storage(&tensor);
 
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
-        // Tag as Other to simulate burnpack / mmap data (non-native backing storage)
-        let non_native_bytes = Bytes::from_shared(
-            bytes::Bytes::copy_from_slice(&bytes),
-            AllocationProperty::Other,
+        assert!(
+            storage.is_borrowed(),
+            "ZERO-COPY REGRESSION: from_data should create borrowed storage \
+             for non-native (e.g. burnpack) TensorData"
         );
-        let tensor_data = TensorData::from_bytes(non_native_bytes, Shape::new([2, 2]), DType::F32);
-
-        let tensor = NdArrayTensor::from_data(tensor_data);
-
-        match &tensor {
-            NdArrayTensor::F32(storage) => {
-                assert!(
-                    storage.is_borrowed(),
-                    "ZERO-COPY REGRESSION: from_data should create borrowed storage \
-                     for non-native (e.g. burnpack) TensorData"
-                );
-                assert!(
-                    !storage.is_unique(),
-                    "ZERO-COPY REGRESSION: borrowed storage must report is_unique() == false"
-                );
-            }
-            _ => panic!("Expected F32 tensor"),
-        }
+        assert!(
+            !storage.is_unique(),
+            "ZERO-COPY REGRESSION: borrowed storage must report is_unique() == false"
+        );
     }
 
     #[test]
     fn native_alloc_creates_owned_storage() {
         // Native heap allocations must use Owned storage to avoid the memcpy.
-        use burn_std::Bytes;
+        let tensor = NdArrayTensor::from_data(f32_tensor_data());
 
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data); // AllocationProperty::Native
-        let tensor_data = TensorData::from_bytes(bytes, Shape::new([2, 2]), DType::F32);
-
-        let tensor = NdArrayTensor::from_data(tensor_data);
-
-        match &tensor {
-            NdArrayTensor::F32(storage) => {
-                assert!(
-                    !storage.is_borrowed(),
-                    "PERF REGRESSION: from_data must NOT create borrowed storage \
-                     for native TensorData"
-                );
-            }
-            _ => panic!("Expected F32 tensor"),
-        }
+        assert!(
+            !f32_storage(&tensor).is_borrowed(),
+            "PERF REGRESSION: from_data must NOT create borrowed storage \
+             for native TensorData"
+        );
     }
 
     #[test]
     fn zero_copy_data_integrity() {
         // Verify data is correctly accessible through borrowed storage
-        use burn_std::Bytes;
+        let tensor = NdArrayTensor::from_data(f32_tensor_data());
+        let view = f32_storage(&tensor).view();
 
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
-        let tensor_data = TensorData::from_bytes(bytes, Shape::new([2, 2]), DType::F32);
-
-        let tensor = NdArrayTensor::from_data(tensor_data);
-
-        match &tensor {
-            NdArrayTensor::F32(storage) => {
-                let view = storage.view();
-                assert_eq!(view[[0, 0]], 1.0);
-                assert_eq!(view[[0, 1]], 2.0);
-                assert_eq!(view[[1, 0]], 3.0);
-                assert_eq!(view[[1, 1]], 4.0);
-            }
-            _ => panic!("Expected F32 tensor"),
-        }
+        assert_eq!(view[[0, 0]], 1.0);
+        assert_eq!(view[[0, 1]], 2.0);
+        assert_eq!(view[[1, 0]], 3.0);
+        assert_eq!(view[[1, 1]], 4.0);
     }
 
     #[test]
@@ -941,8 +886,7 @@ mod tests {
         // This is expected behavior - verify it still works correctly
         let data = TensorData::from([1.0f32, 2.0, 3.0, 4.0]);
         let tensor = NdArrayTensor::from_data(data.clone());
-        let result = tensor.into_data();
 
-        assert_eq!(data, result, "Data should round-trip correctly");
+        assert_eq!(data, tensor.into_data(), "Data should round-trip correctly");
     }
 }

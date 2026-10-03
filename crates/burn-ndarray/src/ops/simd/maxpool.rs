@@ -401,7 +401,7 @@ mod tests {
     use super::*;
     use crate::ops::maxpool::max_pool2d;
     use crate::ops::simd::lanes;
-    use crate::ops::simd::testutil::{nchw, nhwc, simd};
+    use crate::testutil::{nchw, nhwc, simd};
 
     /// Reference max pool over logical `[N, C, H, W]` order, for dtypes the
     /// `FloatNdArrayElement`-bound scalar fallback can't take.

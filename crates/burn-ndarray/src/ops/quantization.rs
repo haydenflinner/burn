@@ -178,11 +178,9 @@ mod tests {
 
     #[test]
     fn test_int8_symmetric_quantization_per_block() {
-        let x: [f32; 8] = [-1.8, -1.0, 0.0, 0.5, -1.8, -1.0, 0.0, 0.5];
-        let expected_q = vec![-127, -71, 0, 35, -127, -71, 0, 35];
-        let expected_d = vec![
-            -1.8, -1.0062993, 0.0, 0.496063, -1.8, -1.0062993, 0.0, 0.496063,
-        ];
+        let x: Vec<f32> = [-1.8, -1.0, 0.0, 0.5].repeat(2);
+        let expected_q = [-127, -71, 0, 35].repeat(2);
+        let expected_d = [-1.8, -1.0062993, 0.0, 0.496063].repeat(2);
 
         let symmetric = SymmetricQuantization::<f32>::new(-1.8, 0.5, QuantValue::Q8S);
         let strategy = QuantizationStrategy::PerBlockSymmetric(

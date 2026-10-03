@@ -240,7 +240,7 @@ mod tests {
     use ndarray::{ArrayD, IxDyn, ShapeBuilder};
 
     use super::*;
-    use crate::ops::simd::testutil::{arr, gapped, simd, vals};
+    use crate::testutil::{arr, gapped, simd, vals};
 
     #[test]
     fn owned_unary_preserves_non_standard_layout() {

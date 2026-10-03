@@ -31,6 +31,8 @@ mod rand;
 mod sharing;
 mod storage;
 mod tensor;
+#[cfg(test)]
+pub(crate) mod testutil;
 
 pub use backend::*;
 pub use element::*;

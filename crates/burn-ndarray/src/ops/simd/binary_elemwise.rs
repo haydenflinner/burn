@@ -423,7 +423,7 @@ mod tests {
     use core::fmt::Debug;
 
     use super::*;
-    use crate::ops::simd::testutil::{arr, gapped, simd, vals};
+    use crate::testutil::{arr, gapped, simd, vals};
 
     /// Assert `input OP rhs` equals `f` applied elementwise.
     fn scalar_op<T, Out, Op>(input: SharedArray<T>, rhs: Op::Rhs, f: impl Fn(T, Op::Rhs) -> Out)

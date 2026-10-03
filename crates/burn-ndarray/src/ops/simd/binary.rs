@@ -303,7 +303,7 @@ mod tests {
     use core::fmt::Debug;
 
     use super::*;
-    use crate::ops::simd::testutil::{arr, arr_at, f_order, pos, simd, vals, vals_b};
+    use crate::testutil::{arr, arr_at, f_order, pos, simd, vals, vals_b};
 
     /// Assert `lhs OP rhs` equals `f` applied elementwise.
     fn binop<T, Out, Op>(lhs: SharedArray<T>, rhs: SharedArray<T>, f: impl Fn(T, T) -> Out)

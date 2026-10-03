@@ -2015,8 +2015,17 @@ mod tests {
     use burn_backend::TensorData;
 
     use crate::NdArrayTensor;
+    use crate::testutil::arr;
 
     use super::*;
+
+    /// Extract the shared array inside an `NdArrayTensor::I32` variant.
+    fn i32_array(tensor: NdArrayTensor) -> SharedArray<i32> {
+        let NdArrayTensor::I32(storage) = tensor else {
+            panic!("expected I32 tensor")
+        };
+        storage.into_shared()
+    }
 
     #[test]
     fn remainder_preserves_i64_precision_and_handles_overflow() {
@@ -2027,8 +2036,8 @@ mod tests {
             (1, i64::MIN, i64::MIN + 1),
             (-5, 3, 1),
         ] {
-            let lhs = ndarray::array![a].into_dyn().into_shared();
-            let rhs = ndarray::array![b].into_dyn().into_shared();
+            let lhs = arr(vec![a]);
+            let rhs = arr(vec![b]);
             assert_eq!(NdArrayMathOps::remainder(lhs.clone(), rhs)[[0]], expected);
             assert_eq!(NdArrayMathOps::remainder_scalar(lhs, b)[[0]], expected);
         }
@@ -2036,8 +2045,8 @@ mod tests {
 
     #[test]
     fn remainder_preserves_u64_precision() {
-        let lhs = ndarray::array![u64::MAX].into_dyn().into_shared();
-        let rhs = ndarray::array![2u64].into_dyn().into_shared();
+        let lhs = arr(vec![u64::MAX]);
+        let rhs = arr(vec![2u64]);
         assert_eq!(NdArrayMathOps::remainder(lhs.clone(), rhs)[[0]], 1);
         assert_eq!(NdArrayMathOps::remainder_scalar(lhs, 2)[[0]], 1);
     }
@@ -2046,34 +2055,25 @@ mod tests {
     fn should_generate_row_major_layout_for_cat() {
         let expected_shape: &[usize] = &[4, 6, 2];
         let expected_strides: &[isize] = &[12, 2, 1];
-        let NdArrayTensor::I32(expected_storage) = NdArrayTensor::from_data(TensorData::from([
+        let expected_array = i32_array(NdArrayTensor::from_data(TensorData::from([
             [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0]],
             [[7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0]],
             [[13, 0], [14, 0], [15, 0], [16, 0], [17, 0], [18, 0]],
             [[19, 0], [20, 0], [21, 0], [22, 0], [23, 0], [24, 0]],
-        ])) else {
-            panic!()
-        };
-        let expected_array = expected_storage.into_shared();
+        ])));
 
-        let NdArrayTensor::I32(tensor_storage) = NdArrayTensor::from_data(TensorData::from([
+        let tensor = i32_array(NdArrayTensor::from_data(TensorData::from([
             [1, 2, 3, 4, 5, 6],
             [7, 8, 9, 10, 11, 12],
             [13, 14, 15, 16, 17, 18],
             [19, 20, 21, 22, 23, 24],
-        ])) else {
-            panic!()
-        };
-        let tensor = tensor_storage.into_shared();
+        ])));
 
         // unsqueeze dim on the outermost axis
         let array = NdArrayOps::reshape(tensor, Shape::from([4, 6, 1]));
-        let NdArrayTensor::I32(zeros_storage) =
-            NdArrayTensor::from_data(TensorData::zeros::<i32, _>([4, 6, 1]))
-        else {
-            panic!()
-        };
-        let zeros = zeros_storage.into_shared();
+        let zeros = i32_array(NdArrayTensor::from_data(TensorData::zeros::<i32, _>([
+            4, 6, 1,
+        ])));
         // make `ndarray` concatenates array on the outermost axis
         let array = NdArrayOps::cat([array, zeros].to_vec(), 2);
 

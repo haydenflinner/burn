@@ -498,7 +498,7 @@ mod tests {
     use super::*;
     use crate::ops::conv::conv2d as conv2d_reference;
     use crate::ops::simd::lanes;
-    use crate::ops::simd::testutil::{arr, arr_at, nchw, simd, vals};
+    use crate::testutil::{arr, arr_at, nchw, simd, vals};
 
     fn conv_f32(stride: [usize; 2], padding: [usize; 2], dilation: [usize; 2], groups: usize) {
         let out_channels = 2 * lanes::<f32>() * groups;

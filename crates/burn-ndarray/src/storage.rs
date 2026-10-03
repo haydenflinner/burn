@@ -245,11 +245,19 @@ mod tests {
     use alloc::{vec, vec::Vec};
     use burn_std::Bytes;
 
+    /// The canonical `1.0..=4.0` f32 buffer used throughout these tests.
+    fn f32_bytes() -> Bytes {
+        Bytes::from_elems(vec![1.0f32, 2.0, 3.0, 4.0])
+    }
+
+    /// `[2, 2]` f32 storage borrowed from [`f32_bytes`].
+    fn borrowed_f32() -> NdArrayStorage<f32> {
+        NdArrayStorage::from_borrowed(f32_bytes(), [2, 2]).expect("should create")
+    }
+
     #[test]
     fn test_borrowed_is_not_unique() {
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
-        let storage = NdArrayStorage::<f32>::from_borrowed(bytes, [2, 2]).expect("should create");
+        let storage = borrowed_f32();
 
         assert!(!storage.is_unique());
         assert!(storage.is_borrowed());
@@ -275,9 +283,7 @@ mod tests {
 
     #[test]
     fn test_view_zero_copy() {
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
-        let storage = NdArrayStorage::<f32>::from_borrowed(bytes, [2, 2]).expect("should create");
+        let storage = borrowed_f32();
 
         let view = storage.view();
         assert_eq!(view[[0, 0]], 1.0);
@@ -286,9 +292,7 @@ mod tests {
 
     #[test]
     fn test_into_owned_copies_borrowed() {
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
-        let storage = NdArrayStorage::<f32>::from_borrowed(bytes, [2, 2]).expect("should create");
+        let storage = borrowed_f32();
 
         let owned = storage.into_owned();
         assert_eq!(owned[[0, 0]], 1.0);
@@ -300,8 +304,7 @@ mod tests {
         use burn_std::AllocationProperty;
 
         // Test 1: Properly aligned data should succeed
-        let aligned_data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let aligned_bytes = Bytes::from_elems(aligned_data);
+        let aligned_bytes = f32_bytes();
 
         // Verify test setup - should be 4-byte aligned for f32
         assert_eq!(
@@ -374,8 +377,7 @@ mod tests {
         // Note: Native allocations copy on clone (this is expected), but the initial
         // load is still zero-copy, avoiding an extra copy in the common case where
         // the tensor is used without cloning.
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
+        let bytes = f32_bytes();
         let original_ptr = bytes.as_ptr();
 
         let storage = NdArrayStorage::<f32>::from_borrowed(bytes, [2, 2]).expect("should create");
@@ -438,10 +440,7 @@ mod tests {
         // Verify that cloning borrowed storage produces another borrowed storage.
         // Note: The underlying Bytes may or may not share memory depending on
         // the allocation controller (native allocations copy, file-backed may share).
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
-
-        let storage = NdArrayStorage::<f32>::from_borrowed(bytes, [2, 2]).expect("should create");
+        let storage = borrowed_f32();
         let cloned = storage.clone();
 
         // Both should still be borrowed (the storage type is preserved)
@@ -472,8 +471,7 @@ mod tests {
     fn test_zero_copy_triggers_copy_on_mutation() {
         // Verify that into_owned() on borrowed data creates a NEW allocation
         // (this is the "copy" in copy-on-write)
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
+        let bytes = f32_bytes();
         let original_ptr = bytes.as_ptr();
 
         let storage = NdArrayStorage::<f32>::from_borrowed(bytes, [2, 2]).expect("should create");
@@ -493,9 +491,7 @@ mod tests {
     fn test_borrowed_reports_not_unique() {
         // CRITICAL: Borrowed storage must report is_unique() == false
         // This is what triggers copy-on-write in mutation operations
-        let data: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0];
-        let bytes = Bytes::from_elems(data);
-        let storage = NdArrayStorage::<f32>::from_borrowed(bytes, [2, 2]).expect("should create");
+        let storage = borrowed_f32();
 
         assert!(
             !storage.is_unique(),

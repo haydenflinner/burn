@@ -376,7 +376,7 @@ mod elemwise {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ops::simd::testutil::{arr, f_order, gapped, simd, vals, vals_b};
+    use crate::testutil::{arr, f_order, gapped, simd, vals, vals_b};
 
     /// Assert `lhs OP rhs` equals `f` applied elementwise.
     fn cmp_op<T, Op>(lhs: SharedArray<T>, rhs: SharedArray<T>, f: impl Fn(T, T) -> bool)

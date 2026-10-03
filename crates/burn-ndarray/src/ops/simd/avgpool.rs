@@ -447,7 +447,7 @@ mod tests {
     use super::*;
     use crate::ops::avgpool::avg_pool2d;
     use crate::ops::simd::lanes;
-    use crate::ops::simd::testutil::{nchw, nhwc, simd};
+    use crate::testutil::{nchw, nhwc, simd};
 
     #[test]
     fn matches_scalar_f32() {
