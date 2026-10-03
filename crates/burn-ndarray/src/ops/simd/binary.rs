@@ -303,9 +303,29 @@ mod tests {
     use core::fmt::Debug;
 
     use super::*;
-    use crate::testutil::{arr, arr_at, f_order, pos, simd, vals, vals_b};
+    use crate::ops::{NdArrayBitOps, NdArrayMathOps};
+    use crate::testutil::{arr, arr_at, f_order, nonstandard, pos, simd, vals, vals_b};
 
-    /// Assert `lhs OP rhs` equals `f` applied elementwise.
+    /// Assert simd `Op` matches the production scalar path: the same public
+    /// op run on layout-rejected copies of the inputs.
+    fn differential<T, Out, Op>(
+        scalar: fn(SharedArray<T>, SharedArray<T>) -> SharedArray<Out>,
+        lhs: SharedArray<T>,
+        rhs: SharedArray<T>,
+    ) where
+        T: NdArrayElement + Scalar,
+        Out: NdArrayElement + Scalar + PartialEq + Debug,
+        Op: SimdBinop<T, Out>,
+    {
+        let expected = scalar(nonstandard(&lhs), nonstandard(&rhs));
+        assert_eq!(
+            simd(try_binary_simd::<T, Out, T, Out, Op>(lhs, rhs)),
+            expected
+        );
+    }
+
+    /// Assert `lhs OP rhs` equals `f` applied elementwise — for simd ops with
+    /// no public entry point to use as an oracle.
     fn binop<T, Out, Op>(lhs: SharedArray<T>, rhs: SharedArray<T>, f: impl Fn(T, T) -> Out)
     where
         T: NdArrayElement + Scalar,
@@ -326,12 +346,64 @@ mod tests {
 
     #[test]
     fn matches_scalar_for_each_op() {
-        binop::<f32, f32, VecDiv>(arr(vals(97)), arr(pos(97)), |a, b| a / b);
-        binop::<f32, f32, VecMin>(arr(vals(97)), arr(vals_b(97)), |a, b| a.min(b));
-        binop::<f32, f32, VecMax>(arr(vals(97)), arr(vals_b(97)), |a, b| a.max(b));
-        binop::<i32, i32, VecBitAnd>(arr(vals(97)), arr(vals_b(97)), |a, b| a & b);
-        binop::<i32, i32, VecBitOr>(arr(vals(97)), arr(vals_b(97)), |a, b| a | b);
-        binop::<i32, i32, VecBitXor>(arr(vals(97)), arr(vals_b(97)), |a, b| a ^ b);
+        differential::<f32, f32, VecAdd>(NdArrayMathOps::add, arr(vals(97)), arr(vals_b(97)));
+        differential::<f32, f32, VecSub>(NdArrayMathOps::sub, arr(vals(97)), arr(vals_b(97)));
+        differential::<f32, f32, VecMul>(NdArrayMathOps::mul, arr(vals(97)), arr(vals_b(97)));
+        differential::<f32, f32, VecDiv>(NdArrayMathOps::div, arr(vals(97)), arr(pos(97)));
+        differential::<i32, i32, VecBitAnd>(NdArrayBitOps::bitand, arr(vals(97)), arr(vals_b(97)));
+        differential::<i32, i32, VecBitOr>(NdArrayBitOps::bitor, arr(vals(97)), arr(vals_b(97)));
+        differential::<i32, i32, VecBitXor>(NdArrayBitOps::bitxor, arr(vals(97)), arr(vals_b(97)));
+
+        // Pairwise min/max have no public dispatch — only reachable through
+        // try_binary_simd directly. The oracle must use MinMax (not f32::min)
+        // to match Op::apply's NaN semantics.
+        binop::<f32, f32, VecMin>(arr(vals(97)), arr(vals_b(97)), MinMax::min);
+        binop::<f32, f32, VecMax>(arr(vals(97)), arr(vals_b(97)), MinMax::max);
+    }
+
+    #[test]
+    fn matches_scalar_on_edge_values() {
+        // ±0, ±1, NaN, ±inf and the f32 extremes, repeated to cover every
+        // lane width plus a scalar tail.
+        let edge: Vec<f32> = [
+            0.0,
+            -0.0,
+            1.0,
+            -1.0,
+            f32::NAN,
+            f32::INFINITY,
+            f32::NEG_INFINITY,
+            f32::MIN,
+            f32::MAX,
+            f32::MIN_POSITIVE,
+            0.5,
+            -0.5,
+        ]
+        .repeat(6);
+
+        // Compare bit patterns so NaN and -0.0 differences are observable.
+        let bits = |a: &SharedArray<f32>| a.iter().map(|v| v.to_bits()).collect::<Vec<_>>();
+        for (name, scalar) in [
+            ("add", NdArrayMathOps::add as fn(_, _) -> _),
+            ("sub", NdArrayMathOps::sub),
+            ("mul", NdArrayMathOps::mul),
+            ("div", NdArrayMathOps::div),
+        ] {
+            let lhs = arr(edge.clone());
+            let rhs = arr(edge.iter().rev().copied().collect());
+            let expected = scalar(nonstandard(&lhs), nonstandard(&rhs));
+            let out = match name {
+                "add" => simd(try_binary_simd::<f32, f32, f32, f32, VecAdd>(lhs, rhs)),
+                "sub" => simd(try_binary_simd::<f32, f32, f32, f32, VecSub>(lhs, rhs)),
+                "mul" => simd(try_binary_simd::<f32, f32, f32, f32, VecMul>(lhs, rhs)),
+                _ => simd(try_binary_simd::<f32, f32, f32, f32, VecDiv>(lhs, rhs)),
+            };
+            assert_eq!(
+                bits(&out),
+                bits(&expected),
+                "simd {name} diverges on edge values"
+            );
+        }
     }
 
     #[test]

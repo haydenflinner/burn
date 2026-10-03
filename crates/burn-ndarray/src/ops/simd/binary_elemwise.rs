@@ -423,9 +423,29 @@ mod tests {
     use core::fmt::Debug;
 
     use super::*;
-    use crate::testutil::{arr, gapped, simd, vals};
+    use crate::ops::{NdArrayBitOps, NdArrayMathOps};
+    use crate::testutil::{arr, gapped, nonstandard, simd, vals};
 
-    /// Assert `input OP rhs` equals `f` applied elementwise.
+    /// Assert simd `Op` matches the production scalar path: the same public
+    /// op run on a layout-rejected copy of the input.
+    fn differential<T, Out, Op>(
+        scalar: fn(SharedArray<T>, Op::Rhs) -> SharedArray<Out>,
+        input: SharedArray<T>,
+        rhs: Op::Rhs,
+    ) where
+        T: NdArrayElement + Scalar,
+        Out: NdArrayElement + Scalar + PartialEq + Debug,
+        Op: ScalarSimdBinop<T, Out>,
+    {
+        let expected = scalar(nonstandard(&input), rhs);
+        assert_eq!(
+            simd(try_binary_scalar_simd::<T, Out, T, Out, Op>(input, rhs)),
+            expected
+        );
+    }
+
+    /// Assert `input OP rhs` equals `f` applied elementwise — for coverage of
+    /// the buffer-reuse branches where the oracle is irrelevant.
     fn scalar_op<T, Out, Op>(input: SharedArray<T>, rhs: Op::Rhs, f: impl Fn(T, Op::Rhs) -> Out)
     where
         T: NdArrayElement + Scalar,
@@ -441,14 +461,25 @@ mod tests {
 
     #[test]
     fn matches_scalar_for_each_op() {
-        scalar_op::<f32, f32, VecMul>(arr(vals(97)), 2.0, |v, r| v * r);
-        scalar_op::<f32, f32, VecDiv>(arr(vals(97)), 2.0, |v, r| v / r);
-        scalar_op::<f32, f32, VecMin>(arr(vals(97)), 3.0, |v, r| v.min(r));
-        scalar_op::<f32, f32, VecMax>(arr(vals(97)), 3.0, |v, r| v.max(r));
-        scalar_op::<f32, f32, VecClamp>(arr(vals(97)), (3.0, 7.0), |v, (lo, hi)| v.clamp(lo, hi));
-        scalar_op::<i32, i32, VecBitAnd>(arr(vals(97)), 0xF, |v, r| v & r);
-        scalar_op::<i32, i32, VecBitOr>(arr(vals(97)), 0xF, |v, r| v | r);
-        scalar_op::<i32, i32, VecBitXor>(arr(vals(97)), 0xF, |v, r| v ^ r);
+        // Arithmetic scalar ops are simd-dispatched for f32 in production.
+        differential::<f32, f32, VecAdd>(NdArrayMathOps::add_scalar, arr(vals(97)), 2.0);
+        differential::<f32, f32, VecSub>(NdArrayMathOps::sub_scalar, arr(vals(97)), 2.0);
+        differential::<f32, f32, VecMul>(NdArrayMathOps::mul_scalar, arr(vals(97)), 2.0);
+        differential::<f32, f32, VecDiv>(NdArrayMathOps::div_scalar, arr(vals(97)), 2.0);
+
+        // min/max/clamp are only simd-dispatched for integer dtypes — f32
+        // deliberately falls back because vector min/max disagree with the
+        // scalar ordering on NaN.
+        differential::<i32, i32, VecMax>(NdArrayMathOps::clamp_min, arr(vals(97)), 3);
+        differential::<i32, i32, VecMin>(NdArrayMathOps::clamp_max, arr(vals(97)), 7);
+        differential::<i32, i32, VecClamp>(
+            |t, (lo, hi)| NdArrayMathOps::clamp(t, lo, hi),
+            arr(vals(97)),
+            (3, 7),
+        );
+        differential::<i32, i32, VecBitAnd>(NdArrayBitOps::bitand_scalar, arr(vals(97)), 0xF);
+        differential::<i32, i32, VecBitOr>(NdArrayBitOps::bitor_scalar, arr(vals(97)), 0xF);
+        differential::<i32, i32, VecBitXor>(NdArrayBitOps::bitxor_scalar, arr(vals(97)), 0xF);
     }
 
     #[test]

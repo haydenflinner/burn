@@ -77,6 +77,28 @@ pub fn gapped<T: Clone>(data: Vec<T>) -> SharedArray<T> {
         .into_shared()
 }
 
+/// A copy of `a` in a layout every simd entry point rejects, so public ops
+/// like `NdArrayMathOps::add` run their scalar fallback on it. Use to build
+/// differential oracles against the production scalar path.
+pub fn nonstandard<T: Clone>(a: &SharedArray<T>) -> SharedArray<T> {
+    let data: Vec<T> = a.iter().cloned().collect();
+    if a.ndim() == 1 {
+        // No non-standard contiguous layout exists in 1-D; use stride-2 storage.
+        let mut padded = Vec::with_capacity(data.len() * 2);
+        for v in data {
+            padded.push(v.clone());
+            padded.push(v);
+        }
+        ArrayD::from_shape_vec(IxDyn(a.shape()).strides(IxDyn(&[2])), padded)
+            .unwrap()
+            .into_shared()
+    } else {
+        ArrayD::from_shape_vec(IxDyn(a.shape()).f(), data)
+            .unwrap()
+            .into_shared()
+    }
+}
+
 /// Unwrap a simd fast-path result, failing the test when it falls back.
 pub fn simd<T, F>(result: Result<SharedArray<T>, F>) -> SharedArray<T> {
     match result {

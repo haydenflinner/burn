@@ -240,7 +240,8 @@ mod tests {
     use ndarray::{ArrayD, IxDyn, ShapeBuilder};
 
     use super::*;
-    use crate::testutil::{arr, gapped, simd, vals};
+    use crate::ops::{NdArrayBitOps, NdArrayMathOps};
+    use crate::testutil::{arr, gapped, nonstandard, simd, vals};
 
     #[test]
     fn owned_unary_preserves_non_standard_layout() {
@@ -290,21 +291,30 @@ mod tests {
 
         assert_eq!(output, expected);
     }
+    /// Assert simd `Op` matches the production scalar path: the same public
+    /// op run on a layout-rejected copy of the input.
+    fn differential<T, Out, Op>(
+        scalar: fn(SharedArray<T>) -> SharedArray<Out>,
+        input: SharedArray<T>,
+    ) where
+        T: NdArrayElement + Scalar,
+        Out: NdArrayElement + Scalar + PartialEq + core::fmt::Debug,
+        Op: SimdUnop<T, Out>,
+    {
+        let expected = scalar(nonstandard(&input));
+        assert_eq!(simd(try_unary_simd::<T, Out, T, Out, Op>(input)), expected);
+    }
+
     #[test]
     fn covers_abs_and_bitnot() {
-        let data = vals::<f32>(97);
-        let expected = arr(data.iter().map(|v| v.abs()).collect());
-        assert_eq!(
-            simd(try_unary_simd::<f32, f32, f32, f32, VecAbs>(arr(data))),
-            expected
+        differential::<f32, f32, VecAbs>(NdArrayMathOps::abs, arr(vals(97)));
+        differential::<i32, i32, VecBitNot>(
+            NdArrayBitOps::bitnot,
+            arr((0..97).map(|i: i32| i * 7).collect()),
         );
-
-        let data: Vec<i32> = (0..97).map(|i: i32| i * 7).collect();
-        let expected = arr(data.iter().map(|v| !v).collect());
-        assert_eq!(
-            simd(try_unary_simd::<i32, i32, i32, i32, VecBitNot>(arr(data))),
-            expected
-        );
+        // RecipVec documents that its vector path is full `1.0/x` division to
+        // match the scalar `recip` bit-for-bit; verify that.
+        differential::<f32, f32, RecipVec>(NdArrayMathOps::recip, arr(vals(97)));
     }
 
     #[test]

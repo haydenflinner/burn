@@ -376,9 +376,25 @@ mod elemwise {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testutil::{arr, f_order, gapped, simd, vals, vals_b};
+    use crate::ops::NdArrayMathOps;
+    use crate::testutil::{arr, f_order, gapped, nonstandard, simd, vals, vals_b};
 
-    /// Assert `lhs OP rhs` equals `f` applied elementwise.
+    /// Assert simd `Op` matches the production scalar path: the same public
+    /// op run on layout-rejected copies of the inputs.
+    fn differential<T, Op>(
+        scalar: fn(SharedArray<T>, SharedArray<T>) -> SharedArray<bool>,
+        lhs: SharedArray<T>,
+        rhs: SharedArray<T>,
+    ) where
+        T: NdArrayElement + Scalar,
+        Op: SimdCmpOp<T>,
+    {
+        let expected = scalar(nonstandard(&lhs), nonstandard(&rhs));
+        assert_eq!(simd(try_cmp_simd::<T, T, Op>(lhs, rhs)), expected);
+    }
+
+    /// Assert `lhs OP rhs` equals `f` applied elementwise — for coverage of
+    /// the operand-buffer reuse branches where the oracle is irrelevant.
     fn cmp_op<T, Op>(lhs: SharedArray<T>, rhs: SharedArray<T>, f: impl Fn(T, T) -> bool)
     where
         T: NdArrayElement + Scalar,
@@ -395,11 +411,19 @@ mod tests {
 
     #[test]
     fn matches_scalar_for_each_op() {
-        cmp_op::<f32, VecEquals>(arr(vals(97)), arr(vals_b(97)), |a, b| a == b);
-        cmp_op::<f32, VecGreater>(arr(vals(97)), arr(vals_b(97)), |a, b| a > b);
-        cmp_op::<f32, VecGreaterEq>(arr(vals(97)), arr(vals_b(97)), |a, b| a >= b);
-        cmp_op::<f32, VecLowerEq>(arr(vals(97)), arr(vals_b(97)), |a, b| a <= b);
-        cmp_op::<f32, VecLower>(arr(vals(97)), arr(vals_b(97)), |a, b| a < b);
+        differential::<f32, VecEquals>(NdArrayMathOps::equal, arr(vals(97)), arr(vals_b(97)));
+        differential::<f32, VecGreater>(NdArrayMathOps::greater, arr(vals(97)), arr(vals_b(97)));
+        differential::<f32, VecGreaterEq>(
+            NdArrayMathOps::greater_equal,
+            arr(vals(97)),
+            arr(vals_b(97)),
+        );
+        differential::<f32, VecLowerEq>(
+            NdArrayMathOps::lower_equal,
+            arr(vals(97)),
+            arr(vals_b(97)),
+        );
+        differential::<f32, VecLower>(NdArrayMathOps::lower, arr(vals(97)), arr(vals_b(97)));
     }
 
     #[test]
@@ -421,19 +445,17 @@ mod tests {
         // f32 can't alias the bool output, so this takes the owned path.
         let input = arr(vals::<f32>(97));
         let _shared = input.clone();
-        let expected = arr(input.iter().map(|v| *v > 0.0).collect::<Vec<_>>());
+        let expected = NdArrayMathOps::greater_elem(nonstandard(&input), 0.0);
         assert_eq!(
             simd(try_cmp_scalar_simd::<f32, f32, VecGreater>(input, 0.0)),
             expected
         );
 
         // u8 input reuses its buffer for the bool output.
-        let expected = arr(vals::<u8>(97).iter().map(|v| *v < 4).collect::<Vec<_>>());
+        let input = arr(vals::<u8>(97));
+        let expected = NdArrayMathOps::lower_elem(nonstandard(&input), 4);
         assert_eq!(
-            simd(try_cmp_scalar_simd::<u8, u8, VecLower>(
-                arr(vals::<u8>(97)),
-                4
-            )),
+            simd(try_cmp_scalar_simd::<u8, u8, VecLower>(input, 4)),
             expected
         );
     }
