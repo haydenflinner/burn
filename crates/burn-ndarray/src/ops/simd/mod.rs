@@ -7,4 +7,7 @@ pub(crate) mod conv;
 pub(crate) mod maxpool;
 pub(crate) mod unary;
 
+#[cfg(test)]
+mod report;
+
 pub use base::*;
