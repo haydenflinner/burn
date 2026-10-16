@@ -225,11 +225,11 @@ burn-vision = { path = "crates/burn-vision", version = "=0.22.0-pre.3", default-
 burn-wgpu = { path = "crates/burn-wgpu", version = "=0.22.0-pre.3", default-features = false }
 
 ### For the main burn branch. ###
-cubecl = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
-cubecl-common = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
-cubecl-environment = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
-cubecl-zspace = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
-cubek = { git = "https://github.com/tracel-ai/cubek", default-features = false, rev = "3a94459a815e3af9c56055a5d201892f608e2845" }
+cubecl = { git = "https://github.com/haydenflinner/cubecl", default-features = false, branch = "devin/clif-cpu-jit-burn" }
+cubecl-common = { git = "https://github.com/haydenflinner/cubecl", default-features = false, branch = "devin/clif-cpu-jit-burn" }
+cubecl-environment = { git = "https://github.com/haydenflinner/cubecl", default-features = false, branch = "devin/clif-cpu-jit-burn" }
+cubecl-zspace = { git = "https://github.com/haydenflinner/cubecl", default-features = false, branch = "devin/clif-cpu-jit-burn" }
+cubek = { git = "https://github.com/haydenflinner/cubek", default-features = false, branch = "devin/clif-cpu-jit-burn" }
 ### For local development. ###
 # cubecl = { path = "../cubecl/crates/cubecl", default-features = false }
 # cubecl-common = { path = "../cubecl/crates/cubecl-common", default-features = false }
@@ -245,3 +245,19 @@ cubek = { git = "https://github.com/tracel-ai/cubek", default-features = false, 
 
 [profile.dev]
 debug = 1 # Speed up compilation time and not necessary.
+
+# cubecl-cpu's Cranelift JIT lowers through rustc_codegen_pliron, which needs
+# its vendored pliron + Cranelift patches. [patch] in a dependency's manifest
+# is ignored, so it must live here at the workspace root.
+[patch.crates-io]
+pliron = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+pliron-derive = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+pliron-llvm = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+regalloc2 = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-codegen = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-codegen-meta = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-object = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-assembler-x64 = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-assembler-x64-meta = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-interpreter = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+rsasm = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }

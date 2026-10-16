@@ -14,7 +14,7 @@ version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b5d307320b3181d6d7954e663bd7c774a838b8220fe0593c86d9fb09f498b4b"
 dependencies = [
- "gimli",
+ "gimli 0.32.3",
 ]
 
 [[package]]
@@ -177,7 +177,7 @@ version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -188,7 +188,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
 dependencies = [
  "anstyle",
  "once_cell_polyfill",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -309,6 +309,47 @@ dependencies = [
 ]
 
 [[package]]
+name = "ascent"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4b69c5a0326edc45aea8469a51f84be0ff28ea1e3a4d087665468793be061682"
+dependencies = [
+ "ascent_base",
+ "ascent_macro",
+ "boxcar 0.1.0",
+ "cfg-if",
+ "hashbrown 0.14.5",
+ "pastey 0.2.3",
+ "rustc-hash 2.1.3",
+ "web-time",
+]
+
+[[package]]
+name = "ascent_base"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "792af0babe403e49368d8717763605fe978b3a1eb7d51b52e3d0a5cb97e6eb74"
+dependencies = [
+ "pastey 0.2.3",
+]
+
+[[package]]
+name = "ascent_macro"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1ac2662b20bf37fd66d21687c0ef91f1c64320a7ca985a34d1c3e60cc9ba940a"
+dependencies = [
+ "ascent_base",
+ "derive-syn-parse",
+ "duplicate",
+ "itertools 0.15.0",
+ "petgraph",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
 name = "ash"
 version = "0.38.0+1.3.281"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -397,6 +438,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a89cbf775b137e9b968e67227ef7f775587cde3fd31b0d8599dbd0f598a48340"
 dependencies = [
  "bytemuck",
+]
+
+[[package]]
+name = "atomic-polyfill"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8cf2bce30dfe09ef0bfaef228b9d414faaf7e563035494d7fe092dba54b300f4"
+dependencies = [
+ "critical-section",
 ]
 
 [[package]]
@@ -862,6 +912,12 @@ dependencies = [
 
 [[package]]
 name = "boxcar"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38c99613cb3cd7429889a08dfcf651721ca971c86afa30798461f8eee994de47"
+
+[[package]]
+name = "boxcar"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "36f64beae40a84da1b4b26ff2761a5b895c12adc41dc25aaee1c4f2bbfe97a6e"
@@ -909,6 +965,9 @@ name = "bumpalo"
 version = "3.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
+dependencies = [
+ "allocator-api2 0.2.21",
+]
 
 [[package]]
 name = "burn"
@@ -1874,7 +1933,7 @@ checksum = "af491d569909a7e4dee0ad7db7f5341fef5c614d5b8ec8cf765732aba3cff681"
 dependencies = [
  "serde",
  "termcolor",
- "unicode-width 0.1.14",
+ "unicode-width 0.2.2",
 ]
 
 [[package]]
@@ -1905,7 +1964,7 @@ version = "3.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -2153,6 +2212,206 @@ dependencies = [
 ]
 
 [[package]]
+name = "cranelift-assembler-x64"
+version = "0.135.5"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+dependencies = [
+ "cranelift-assembler-x64-meta",
+]
+
+[[package]]
+name = "cranelift-assembler-x64-meta"
+version = "0.135.5"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+dependencies = [
+ "cranelift-srcgen",
+]
+
+[[package]]
+name = "cranelift-bforest"
+version = "0.135.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a266da98b248dd98dfc8a46d45d57810db04a55b81a6d8c7a9c6cf0bd2db7c3"
+dependencies = [
+ "cranelift-entity",
+ "wasmtime-internal-core",
+]
+
+[[package]]
+name = "cranelift-bitset"
+version = "0.135.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c67c1887ed2194ef3ecc283a9add4fe8a79d249a293063046f2adedc31ae7200"
+dependencies = [
+ "serde",
+ "serde_derive",
+ "wasmtime-internal-core",
+]
+
+[[package]]
+name = "cranelift-codegen"
+version = "0.135.5"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+dependencies = [
+ "bumpalo",
+ "cranelift-assembler-x64",
+ "cranelift-bforest",
+ "cranelift-bitset",
+ "cranelift-codegen-meta",
+ "cranelift-codegen-shared",
+ "cranelift-control",
+ "cranelift-entity",
+ "cranelift-isle",
+ "gimli 0.33.0",
+ "hashbrown 0.17.1",
+ "libm",
+ "log",
+ "postcard",
+ "regalloc2",
+ "rustc-hash 2.1.3",
+ "serde",
+ "serde_derive",
+ "sha2 0.10.9",
+ "smallvec",
+ "target-lexicon",
+ "wasmtime-internal-core",
+]
+
+[[package]]
+name = "cranelift-codegen-meta"
+version = "0.135.5"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+dependencies = [
+ "cranelift-assembler-x64-meta",
+ "cranelift-codegen-shared",
+ "cranelift-srcgen",
+ "heck",
+]
+
+[[package]]
+name = "cranelift-codegen-shared"
+version = "0.135.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b08c970e27b123ff6764a525aa50dfd4a6e350022e8c27027d10b3dde5cc49fc"
+
+[[package]]
+name = "cranelift-control"
+version = "0.135.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "985a7c32c3a72fd8f44a8ead3211352c364ce509bf8b0b177184d7574f4e9397"
+dependencies = [
+ "arbitrary",
+]
+
+[[package]]
+name = "cranelift-entity"
+version = "0.135.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af201af93fa8a576ac4b04b901ac3f252545d7b703053c922526fce28f65a7be"
+dependencies = [
+ "cranelift-bitset",
+ "serde",
+ "serde_derive",
+ "wasmtime-internal-core",
+]
+
+[[package]]
+name = "cranelift-frontend"
+version = "0.135.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "69395ceee43706b93bf869b3a6631ab8d9dcb2bf19f9af4d1d2db0cb9e18af18"
+dependencies = [
+ "cranelift-codegen",
+ "hashbrown 0.17.1",
+ "log",
+ "smallvec",
+ "target-lexicon",
+]
+
+[[package]]
+name = "cranelift-interpreter"
+version = "0.135.5"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+dependencies = [
+ "cranelift-codegen",
+ "cranelift-entity",
+ "libm",
+ "log",
+ "smallvec",
+ "thiserror 2.0.20",
+]
+
+[[package]]
+name = "cranelift-isle"
+version = "0.135.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e8d98a81f71e2ddc61849ca1454ff424fbf42a3ee5529365be8c0859ddf5b9a"
+
+[[package]]
+name = "cranelift-jit"
+version = "0.135.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64bd9d8feefd7b9cc43e646c0de570e9fccfba8e24c85e5f5148c4462284fe9a"
+dependencies = [
+ "anyhow",
+ "cranelift-codegen",
+ "cranelift-control",
+ "cranelift-entity",
+ "cranelift-module",
+ "cranelift-native",
+ "libc",
+ "log",
+ "memmap2",
+ "region",
+ "target-lexicon",
+ "wasmtime-internal-jit-icache-coherence",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "cranelift-module"
+version = "0.135.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1180199bfd3a02dd5758e2cfb49a218e55732a61ef0cc1ebd1756866b0a297a0"
+dependencies = [
+ "anyhow",
+ "cranelift-codegen",
+ "cranelift-control",
+]
+
+[[package]]
+name = "cranelift-native"
+version = "0.135.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "273c79e0265b754f67ff76c42d6db4856dabf9101e3bb1b23c83255e2438dd02"
+dependencies = [
+ "cranelift-codegen",
+ "libc",
+ "target-lexicon",
+]
+
+[[package]]
+name = "cranelift-object"
+version = "0.135.5"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+dependencies = [
+ "anyhow",
+ "cranelift-codegen",
+ "cranelift-control",
+ "cranelift-module",
+ "gimli 0.33.0",
+ "log",
+ "object 0.39.1",
+ "target-lexicon",
+]
+
+[[package]]
+name = "cranelift-srcgen"
+version = "0.135.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce1932d832b1d6c0fcb852d4b1fd1fe9930fc2e0cfa7d125a90ee3f86978310d"
+
+[[package]]
 name = "crc32c"
 version = "0.6.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2342,7 +2601,7 @@ dependencies = [
 [[package]]
 name = "cubecl"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "cubecl-core",
  "cubecl-cpu",
@@ -2360,7 +2619,7 @@ dependencies = [
 [[package]]
 name = "cubecl-common"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "bytemuck",
  "cfg_aliases",
@@ -2384,7 +2643,7 @@ dependencies = [
 [[package]]
 name = "cubecl-core"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "bitflags 2.13.1",
  "bytemuck",
@@ -2404,7 +2663,7 @@ dependencies = [
  "num-complex",
  "num-traits",
  "paste",
- "pliron",
+ "pliron 0.19.0",
  "serde",
  "serde_json",
  "tracing",
@@ -2414,7 +2673,7 @@ dependencies = [
 [[package]]
 name = "cubecl-cpp"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "bytemuck",
  "cubecl-common",
@@ -2429,7 +2688,7 @@ dependencies = [
  "log",
  "num-traits",
  "paste",
- "pliron",
+ "pliron 0.19.0",
  "sanitize-filename",
  "thiserror 2.0.20",
 ]
@@ -2437,7 +2696,7 @@ dependencies = [
 [[package]]
 name = "cubecl-cpu"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "bytemuck",
  "crossbeam-utils",
@@ -2450,7 +2709,7 @@ dependencies = [
  "derive-new",
  "libc",
  "log",
- "pliron",
+ "pliron 0.19.0",
  "spin 0.12.3",
  "sysinfo 0.39.6",
  "winapi",
@@ -2459,7 +2718,7 @@ dependencies = [
 [[package]]
 name = "cubecl-cuda"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "bytemuck",
  "cubecl-common",
@@ -2478,7 +2737,7 @@ dependencies = [
 [[package]]
 name = "cubecl-environment"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "async-channel",
  "backtrace",
@@ -2513,7 +2772,7 @@ dependencies = [
 [[package]]
 name = "cubecl-hip"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "bytemuck",
  "cubecl-common",
@@ -2544,7 +2803,7 @@ dependencies = [
 [[package]]
 name = "cubecl-ir"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "bumpalo",
  "cubecl-common",
@@ -2562,7 +2821,7 @@ dependencies = [
  "num-integer",
  "num-traits",
  "paste",
- "pliron",
+ "pliron 0.19.0",
  "pliron-spirv",
  "portable-atomic",
  "rustc_apfloat",
@@ -2576,9 +2835,13 @@ dependencies = [
 [[package]]
 name = "cubecl-llvm"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "cc",
+ "cranelift-codegen",
+ "cranelift-jit",
+ "cranelift-module",
+ "cranelift-native",
  "cubecl-core",
  "cubecl-environment",
  "cubecl-opt",
@@ -2586,7 +2849,8 @@ dependencies = [
  "derive-new",
  "half",
  "llvm-sys",
- "pliron",
+ "pliron 0.19.0",
+ "pliron-clif-lower",
  "pliron-llvm",
  "thiserror 2.0.20",
  "tracel-llvm-bundler",
@@ -2595,7 +2859,7 @@ dependencies = [
 [[package]]
 name = "cubecl-macros"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "darling 0.24.1",
  "derive-new",
@@ -2612,7 +2876,7 @@ dependencies = [
 [[package]]
 name = "cubecl-macros-internal"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "darling 0.24.1",
  "inflections",
@@ -2624,7 +2888,7 @@ dependencies = [
 [[package]]
 name = "cubecl-metal"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "block2",
  "bytemuck",
@@ -2647,7 +2911,7 @@ dependencies = [
 [[package]]
 name = "cubecl-opt"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "cubecl-common",
  "cubecl-core",
@@ -2660,7 +2924,7 @@ dependencies = [
  "hashbrown 0.17.1",
  "itertools 0.15.0",
  "log",
- "pliron",
+ "pliron 0.19.0",
  "smallvec",
  "thiserror 2.0.20",
 ]
@@ -2668,7 +2932,7 @@ dependencies = [
 [[package]]
 name = "cubecl-runtime"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "buildid",
  "bytemuck",
@@ -2685,7 +2949,7 @@ dependencies = [
  "hashbrown 0.17.1",
  "itertools 0.15.0",
  "log",
- "pliron",
+ "pliron 0.19.0",
  "serde",
  "serde_json",
  "smallvec",
@@ -2698,7 +2962,7 @@ dependencies = [
 [[package]]
 name = "cubecl-server"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "buildid",
  "bytemuck",
@@ -2716,7 +2980,7 @@ dependencies = [
  "hashbrown 0.17.1",
  "itertools 0.15.0",
  "log",
- "pliron",
+ "pliron 0.19.0",
  "serde",
  "serde_json",
  "smallvec",
@@ -2727,7 +2991,7 @@ dependencies = [
 [[package]]
 name = "cubecl-spirv"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "bitflags 2.13.1",
  "cubecl-common",
@@ -2740,7 +3004,7 @@ dependencies = [
  "hashbrown 0.17.1",
  "itertools 0.15.0",
  "paste",
- "pliron",
+ "pliron 0.19.0",
  "pliron-spirv",
  "sanitize-filename",
  "serde",
@@ -2750,7 +3014,7 @@ dependencies = [
 [[package]]
 name = "cubecl-std"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "cubecl-common",
  "cubecl-core",
@@ -2767,7 +3031,7 @@ dependencies = [
 [[package]]
 name = "cubecl-wgpu"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "ash",
  "bytemuck",
@@ -2790,7 +3054,7 @@ dependencies = [
  "objc2",
  "objc2-foundation",
  "objc2-metal",
- "pliron",
+ "pliron 0.19.0",
  "sanitize-filename",
  "thiserror 2.0.20",
  "tracel-ash",
@@ -2802,7 +3066,7 @@ dependencies = [
 [[package]]
 name = "cubecl-zspace"
 version = "0.11.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubecl?rev=d0052727a3a70970b20945384f337f5051987206#d0052727a3a70970b20945384f337f5051987206"
+source = "git+https://github.com/haydenflinner/cubecl?branch=devin%2Fclif-cpu-jit-burn#a55c317143b12dab2a373d1b44f98e6c0703dcb0"
 dependencies = [
  "derive-new",
  "serde",
@@ -2812,7 +3076,7 @@ dependencies = [
 [[package]]
 name = "cubek"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "cubecl",
  "cubek-attention",
@@ -2830,7 +3094,7 @@ dependencies = [
 [[package]]
 name = "cubek-attention"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "bytemuck",
  "cubecl",
@@ -2844,7 +3108,7 @@ dependencies = [
 [[package]]
 name = "cubek-convolution"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "bytemuck",
  "cubecl",
@@ -2860,7 +3124,7 @@ dependencies = [
 [[package]]
 name = "cubek-fft"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "cubecl",
 ]
@@ -2868,7 +3132,7 @@ dependencies = [
 [[package]]
 name = "cubek-interpolate"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "cubecl",
  "cubecl-common",
@@ -2881,7 +3145,7 @@ dependencies = [
 [[package]]
 name = "cubek-matmul"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "bytemuck",
  "cubecl",
@@ -2895,7 +3159,7 @@ dependencies = [
 [[package]]
 name = "cubek-pool"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "cubecl",
  "cubecl-common",
@@ -2905,7 +3169,7 @@ dependencies = [
 [[package]]
 name = "cubek-quant"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "cubecl",
  "cubecl-common",
@@ -2917,7 +3181,7 @@ dependencies = [
 [[package]]
 name = "cubek-random"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "cubecl",
  "cubecl-common",
@@ -2932,7 +3196,7 @@ dependencies = [
 [[package]]
 name = "cubek-reduce"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "cubecl",
  "cubek-std",
@@ -2945,7 +3209,7 @@ dependencies = [
 [[package]]
 name = "cubek-std"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "cubecl",
  "cubecl-common",
@@ -2954,7 +3218,7 @@ dependencies = [
 [[package]]
 name = "cubek-tile"
 version = "0.3.0-pre.3"
-source = "git+https://github.com/tracel-ai/cubek?rev=3a94459a815e3af9c56055a5d201892f608e2845#3a94459a815e3af9c56055a5d201892f608e2845"
+source = "git+https://github.com/haydenflinner/cubek?branch=devin%2Fclif-cpu-jit-burn#000c831971cda1c5073272ee60aecdabb0fae4e9"
 dependencies = [
  "bytemuck",
  "cubecl",
@@ -3220,7 +3484,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c54e03a951783e8b327515db3f2a2fd0e3bed362a96b066f341ce66ed49b4ead"
 dependencies = [
  "data-encoding",
- "syn 3.0.4",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -3294,6 +3558,17 @@ name = "derive-new"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2cdc8d50f426189eef89dac62fabfa0abb27d5cc008f25bf4156a0203325becc"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
+name = "derive-syn-parse"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d65d7ce8132b7c0e54497a4d9a55a1c2a0912a0d786cf894472ba818fba45762"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3408,7 +3683,7 @@ dependencies = [
  "libc",
  "option-ext",
  "redox_users",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -3526,6 +3801,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2647271c92754afcb174e758003cfd1cbf1e43e5a7853d7b1813e63e19e39a73"
 
 [[package]]
+name = "duplicate"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e92f10a49176cbffacaedabfaa11d51db1ea0f80a83c26e1873b43cd1742c24"
+
+[[package]]
 name = "dyn-clone"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3572,6 +3853,27 @@ dependencies = [
  "signature",
  "subtle",
  "zeroize",
+]
+
+[[package]]
+name = "egg"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "abb749745461743bb477fba3ef87c663d5965876155c676c9489cfe0963de5ab"
+dependencies = [
+ "env_logger 0.9.3",
+ "hashbrown 0.15.5",
+ "indexmap",
+ "log",
+ "num-bigint",
+ "num-traits",
+ "quanta",
+ "rustc-hash 2.1.3",
+ "saturating",
+ "smallvec",
+ "symbol_table",
+ "symbolic_expressions",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -3720,6 +4022,15 @@ dependencies = [
 
 [[package]]
 name = "env_logger"
+version = "0.9.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a12e6657c4c97ebab115a42dcee77225f7f482cdd841cf7088c657a42e9e00e7"
+dependencies = [
+ "log",
+]
+
+[[package]]
+name = "env_logger"
 version = "0.11.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "de671bd27a75a797dc9ae289ba1e77276e75e2026408aab65185384e2d5cd3f6"
@@ -3764,7 +4075,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -3952,6 +4263,12 @@ name = "fixedbitset"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ce7134b9999ecaf8bcd65542e436736ef32ddca1b3e06094cb6ec5755203b80"
+
+[[package]]
+name = "fixedbitset"
+version = "0.5.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99"
 
 [[package]]
 name = "flate2"
@@ -4375,6 +4692,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e629b9b98ef3dd8afe6ca2bd0f89306cec16d43d907889945bc5d6687f2f13c7"
 
 [[package]]
+name = "gimli"
+version = "0.33.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0bf7f043f89559805f8c7cacc432749b2fa0d0a0a9ee46ce47164ed5ba7f126c"
+dependencies = [
+ "fnv",
+ "hashbrown 0.16.1",
+ "indexmap",
+ "stable_deref_trait",
+]
+
+[[package]]
 name = "gix-features"
 version = "0.48.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4537,7 +4866,7 @@ dependencies = [
  "log",
  "presser",
  "thiserror 2.0.20",
- "windows 0.62.2",
+ "windows 0.61.3",
 ]
 
 [[package]]
@@ -4582,6 +4911,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hash32"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0c35f58762feb77d74ebe43bdbc3210f09be9fe6742234d573bacc26ed92b67"
+dependencies = [
+ "byteorder",
+]
+
+[[package]]
 name = "hashbrown"
 version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4595,6 +4933,10 @@ name = "hashbrown"
 version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
+dependencies = [
+ "ahash",
+ "allocator-api2 0.2.21",
+]
 
 [[package]]
 name = "hashbrown"
@@ -4641,6 +4983,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32069d97bb81e38fa67eab65e3393bf804bb85969f2bc06bf13f64aef5aba248"
 dependencies = [
  "hashbrown 0.17.1",
+]
+
+[[package]]
+name = "heapless"
+version = "0.7.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cdc6457c0eb62c71aac4bc17216026d8410337c4126773b9c5daba343f17964f"
+dependencies = [
+ "atomic-polyfill",
+ "hash32",
+ "rustc_version",
+ "serde",
+ "spin 0.9.9",
+ "stable_deref_trait",
 ]
 
 [[package]]
@@ -6059,6 +6415,15 @@ dependencies = [
 
 [[package]]
 name = "mach2"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d640282b302c0bb0a2a8e0233ead9035e3bed871f0b7e81fe4a1ec829765db44"
+dependencies = [
+ "libc",
+]
+
+[[package]]
+name = "mach2"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dae608c151f68243f2b000364e1f7b186d9c29845f7d2d85bd31b9ad77ad552b"
@@ -6775,7 +7140,7 @@ version = "0.50.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -7092,6 +7457,9 @@ version = "0.39.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2e5a6c098c7a3b6547378093f5cc30bc54fd361ce711e05293a5cc589562739b"
 dependencies = [
+ "crc32fast",
+ "hashbrown 0.17.1",
+ "indexmap",
  "memchr",
 ]
 
@@ -7443,6 +7811,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "petgraph"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8701b58ea97060d5e5b155d383a69952a60943f0e6dfe30b04c287beb0b27455"
+dependencies = [
+ "fixedbitset 0.5.7",
+ "hashbrown 0.15.5",
+ "indexmap",
+ "serde",
+]
+
+[[package]]
 name = "pharos"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7576,8 +7956,9 @@ dependencies = [
 
 [[package]]
 name = "pliron"
-version = "0.17.0"
-source = "git+https://github.com/pliron-org/pliron.git?rev=e23ff9faa16425f2bd995aa92d960dee6721f9aa#e23ff9faa16425f2bd995aa92d960dee6721f9aa"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4569fbc8e56df3331511fbdf266664e97c851c894840a4dc166c1505c94a2492"
 dependencies = [
  "awint",
  "combine",
@@ -7590,7 +7971,33 @@ dependencies = [
  "linkme",
  "log",
  "once_vec",
- "pliron-derive",
+ "pliron-derive 0.18.0",
+ "regex",
+ "rustc-hash 2.1.3",
+ "rustc_apfloat",
+ "slotmap",
+ "smallvec",
+ "spin 0.10.1",
+ "thiserror 2.0.20",
+]
+
+[[package]]
+name = "pliron"
+version = "0.19.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=b4efeef18a286e67746b2a0652396e4d3121836d#b4efeef18a286e67746b2a0652396e4d3121836d"
+dependencies = [
+ "awint",
+ "combine",
+ "downcast-rs",
+ "dyn-clone",
+ "hashbrown 0.13.2",
+ "hi_sparse_bitset",
+ "indexmap",
+ "inventory",
+ "linkme",
+ "log",
+ "once_vec",
+ "pliron-derive 0.19.0",
  "regex",
  "rustc-hash 2.1.3",
  "rustc_apfloat",
@@ -7602,9 +8009,64 @@ dependencies = [
 ]
 
 [[package]]
+name = "pliron-cfg"
+version = "0.1.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=b4efeef18a286e67746b2a0652396e4d3121836d#b4efeef18a286e67746b2a0652396e4d3121836d"
+dependencies = [
+ "rustc-hash 2.1.3",
+ "tracing",
+]
+
+[[package]]
+name = "pliron-clif-lower"
+version = "0.1.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=b4efeef18a286e67746b2a0652396e4d3121836d#b4efeef18a286e67746b2a0652396e4d3121836d"
+dependencies = [
+ "cranelift-codegen",
+ "cranelift-frontend",
+ "cranelift-module",
+ "cranelift-object",
+ "gimli 0.33.0",
+ "object 0.39.1",
+ "pliron 0.19.0",
+ "pliron-cfg",
+ "pliron-clif-opt",
+ "pliron-ir-opt",
+ "pliron-llvm",
+ "rsasm",
+ "rustc-hash 2.1.3",
+ "rustc_apfloat",
+ "smallvec",
+ "target-lexicon",
+ "tracing",
+]
+
+[[package]]
+name = "pliron-clif-opt"
+version = "0.1.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=b4efeef18a286e67746b2a0652396e4d3121836d#b4efeef18a286e67746b2a0652396e4d3121836d"
+dependencies = [
+ "ascent",
+ "cranelift-codegen",
+ "cranelift-interpreter",
+ "cranelift-module",
+ "pliron 0.19.0",
+ "pliron-cfg",
+ "postcard",
+ "rustc-hash 2.1.3",
+ "serde",
+ "sha2 0.11.0",
+ "smallvec",
+ "target-lexicon",
+ "tracing",
+ "tracing-core",
+]
+
+[[package]]
 name = "pliron-derive"
-version = "0.17.0"
-source = "git+https://github.com/pliron-org/pliron.git?rev=e23ff9faa16425f2bd995aa92d960dee6721f9aa#e23ff9faa16425f2bd995aa92d960dee6721f9aa"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f3aac081c3e21485f283f602816a337d4810e0c1b36191804e95dcca506ce66"
 dependencies = [
  "combine",
  "convert_case 0.11.0",
@@ -7616,26 +8078,57 @@ dependencies = [
 ]
 
 [[package]]
+name = "pliron-derive"
+version = "0.19.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=b4efeef18a286e67746b2a0652396e4d3121836d#b4efeef18a286e67746b2a0652396e4d3121836d"
+dependencies = [
+ "combine",
+ "convert_case 0.11.0",
+ "indexmap",
+ "proc-macro2",
+ "quote",
+ "rustc-hash 2.1.3",
+ "syn 3.0.4",
+]
+
+[[package]]
+name = "pliron-ir-opt"
+version = "0.1.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=b4efeef18a286e67746b2a0652396e4d3121836d#b4efeef18a286e67746b2a0652396e4d3121836d"
+dependencies = [
+ "ascent",
+ "cranelift-codegen",
+ "cranelift-module",
+ "egg",
+ "indexmap",
+ "pliron 0.19.0",
+ "pliron-cfg",
+ "pliron-llvm",
+ "rustc-hash 2.1.3",
+ "tracing",
+]
+
+[[package]]
 name = "pliron-llvm"
-version = "0.17.0"
-source = "git+https://github.com/pliron-org/pliron.git?rev=e23ff9faa16425f2bd995aa92d960dee6721f9aa#e23ff9faa16425f2bd995aa92d960dee6721f9aa"
+version = "0.19.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=b4efeef18a286e67746b2a0652396e4d3121836d#b4efeef18a286e67746b2a0652396e4d3121836d"
 dependencies = [
  "bitflags 2.13.1",
  "llvm-sys",
  "log",
- "pliron",
+ "pliron 0.19.0",
  "thiserror 2.0.20",
 ]
 
 [[package]]
 name = "pliron-spirv"
 version = "0.14.1+sdk-1.4.357.0"
-source = "git+https://github.com/tracel-ai/tracel-rspirv.git?rev=12e0e9b056956778ee824dc954dd37a50eb6d886#12e0e9b056956778ee824dc954dd37a50eb6d886"
+source = "git+https://github.com/tracel-ai/tracel-rspirv.git?rev=e687120f2076ac34c4d3799fc5c9236ccd6d4915#e687120f2076ac34c4d3799fc5c9236ccd6d4915"
 dependencies = [
  "derive-new",
  "derive_more",
  "itertools 0.15.0",
- "pliron",
+ "pliron 0.18.0",
  "thiserror 2.0.20",
  "tracel-rspirv",
 ]
@@ -7810,7 +8303,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3e5924fc46306054bae78f9d35ea5e404cf185baa7f170eb55a16ff95191069c"
 dependencies = [
  "bitflags 2.13.1",
- "boxcar",
+ "boxcar 0.2.14",
  "bytemuck",
  "chrono",
  "chrono-tz",
@@ -7850,7 +8343,7 @@ version = "0.54.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b65a750bb99ea66be90c8a7e336f6f3a87427a0f7f89d2a40adae98314e9b27"
 dependencies = [
- "boxcar",
+ "boxcar 0.2.14",
  "hashbrown 0.16.1",
  "polars-arrow",
  "polars-error",
@@ -7999,7 +8492,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78b3eea0b386837b760a97ec9c92df99cbc10f94885cae060fd7100f9b794163"
 dependencies = [
  "async-trait",
- "boxcar",
+ "boxcar 0.2.14",
  "libc",
  "polars-async",
  "polars-config",
@@ -8356,6 +8849,7 @@ dependencies = [
  "cobs",
  "embedded-io 0.4.0",
  "embedded-io 0.6.1",
+ "heapless",
  "postcard-derive",
  "serde",
 ]
@@ -8567,6 +9061,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "quanta"
+version = "0.12.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f3ab5a9d756f0d97bdc89019bd2e4ea098cf9cde50ee7564dde6b81ccc8f06c7"
+dependencies = [
+ "crossbeam-utils",
+ "libc",
+ "once_cell",
+ "raw-cpuid",
+ "wasi",
+ "web-sys",
+ "winapi",
+]
+
+[[package]]
 name = "quick-error"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8644,7 +9153,7 @@ dependencies = [
  "once_cell",
  "socket2",
  "tracing",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -9091,6 +9600,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "regalloc2"
+version = "0.15.2"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+dependencies = [
+ "allocator-api2 0.2.21",
+ "bumpalo",
+ "hashbrown 0.17.1",
+ "log",
+ "rustc-hash 2.1.3",
+ "serde",
+ "smallvec",
+]
+
+[[package]]
 name = "regex"
 version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9124,6 +9647,18 @@ name = "regex-syntax"
 version = "0.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+
+[[package]]
+name = "region"
+version = "3.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e6b6ebd13bc009aef9cd476c1310d49ac354d36e240cf1bd753290f3dc7199a7"
+dependencies = [
+ "bitflags 1.3.2",
+ "libc",
+ "mach2 0.4.3",
+ "windows-sys 0.52.0",
+]
 
 [[package]]
 name = "relative-path"
@@ -9288,6 +9823,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "rsasm"
+version = "0.1.3"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+
+[[package]]
 name = "rsqlite-vfs"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9425,7 +9965,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.12.1",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -9483,7 +10023,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -9573,6 +10113,12 @@ checksum = "bc984f4f9ceb736a7bb755c3e3bd17dc56370af2600c9780dcc48c66453da34d"
 dependencies = [
  "regex",
 ]
+
+[[package]]
+name = "saturating"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ece8e78b2f38ec51c51f5d475df0a7187ba5111b2a28bdc761ee05b075d40a71"
 
 [[package]]
 name = "schannel"
@@ -10031,7 +10577,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -10066,6 +10612,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "spin"
+version = "0.9.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3763264f6b73151db08c50ff20d7d8a0b8796e021cdea7ceedad07b80155fa0e"
+dependencies = [
+ "lock_api",
 ]
 
 [[package]]
@@ -10168,7 +10723,7 @@ dependencies = [
  "cfg-if",
  "libc",
  "psm",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -10273,6 +10828,23 @@ name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
+
+[[package]]
+name = "symbol_table"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f19bffd69fb182e684d14e3c71d04c0ef33d1641ac0b9e81c712c734e83703bc"
+dependencies = [
+ "crossbeam-utils",
+ "foldhash 0.1.5",
+ "hashbrown 0.15.5",
+]
+
+[[package]]
+name = "symbolic_expressions"
+version = "5.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c68d531d83ec6c531150584c42a4290911964d5f0d79132b193b67252a23b71"
 
 [[package]]
 name = "symlink"
@@ -10407,7 +10979,7 @@ dependencies = [
  "kstat-rs",
  "lazy_static",
  "libc",
- "mach2",
+ "mach2 0.6.0",
  "nom 7.1.3",
  "time",
  "winapi",
@@ -10437,6 +11009,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "target-lexicon"
+version = "0.13.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
+
+[[package]]
 name = "tch"
 version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -10463,7 +11041,7 @@ dependencies = [
  "getrandom 0.4.3",
  "once_cell",
  "rustix 1.1.4",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -10485,7 +11063,7 @@ dependencies = [
  "parking_lot",
  "rustix 1.1.4",
  "signal-hook 0.3.18",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -10495,7 +11073,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "230a1b821ccbd75b185820a1f1ff7b14d21da1e442e22c0863ea5f08771a8874"
 dependencies = [
  "rustix 1.1.4",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -10531,7 +11109,7 @@ dependencies = [
  "fancy-regex",
  "filedescriptor",
  "finl_unicode",
- "fixedbitset",
+ "fixedbitset 0.4.2",
  "hex",
  "lazy_static",
  "libc",
@@ -11027,10 +11605,10 @@ dependencies = [
 [[package]]
 name = "tracel-rspirv"
 version = "0.14.1+sdk-1.4.357.0"
-source = "git+https://github.com/tracel-ai/tracel-rspirv.git?rev=12e0e9b056956778ee824dc954dd37a50eb6d886#12e0e9b056956778ee824dc954dd37a50eb6d886"
+source = "git+https://github.com/tracel-ai/tracel-rspirv.git?rev=e687120f2076ac34c4d3799fc5c9236ccd6d4915#e687120f2076ac34c4d3799fc5c9236ccd6d4915"
 dependencies = [
  "bitflags 2.13.1",
- "pliron",
+ "pliron 0.18.0",
  "rustc-hash 2.1.3",
  "serde",
 ]
@@ -11071,7 +11649,7 @@ dependencies = [
  "anyhow",
  "clap",
  "dotenvy",
- "env_logger",
+ "env_logger 0.11.11",
  "log",
  "rand 0.9.5",
  "regex",
@@ -11326,7 +11904,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e73f5242b4cbbee9fe8fddbe1ea7be4154f9c4a647199010ea97e479f0f28b28"
 dependencies = [
  "bindgen",
- "env_logger",
+ "env_logger 0.11.11",
  "parking_lot",
  "tracing",
  "tracing-appender",
@@ -11377,7 +11955,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "357e81612a02848114f2ad4fbbc7ede242c7eb4a8ca981092fae2278984deba5"
 dependencies = [
  "bindgen",
- "env_logger",
+ "env_logger 0.11.11",
  "genawaiter",
  "parking_lot",
  "tracing",
@@ -11834,6 +12412,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasmtime-internal-core"
+version = "48.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ecc0a0310fc4a3f545427c7880362657f72f838ffcfe4d3b8c864021df3b3488"
+dependencies = [
+ "hashbrown 0.17.1",
+ "libm",
+]
+
+[[package]]
+name = "wasmtime-internal-jit-icache-coherence"
+version = "48.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6aa66405e95fc7b82adb195c14fa8b38f45046c3ad99a273b06262b8eb755e76"
+dependencies = [
+ "libc",
+ "wasmtime-internal-core",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
 name = "wayland-sys"
 version = "0.31.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -12201,7 +12800,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -13040,3 +13639,18 @@ checksum = "27bc9d5b815bc103f142aa054f561d9187d191692ec7c2d1e2b4737f8dbd7296"
 dependencies = [
  "zune-core",
 ]
+
+[[patch.unused]]
+name = "pliron"
+version = "0.19.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+
+[[patch.unused]]
+name = "pliron-derive"
+version = "0.19.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
+
+[[patch.unused]]
+name = "pliron-llvm"
+version = "0.19.0"
+source = "git+https://github.com/haydenflinner/rustc_codegen_pliron?rev=86eb3ba9ce9702eda623dbe132948c76e4d5a301#86eb3ba9ce9702eda623dbe132948c76e4d5a301"
