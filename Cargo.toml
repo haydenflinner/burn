@@ -116,7 +116,9 @@ tracing-subscriber = "0.3.23"
 # builds and the eventual `0.8.x`, and `turso::Error` is reachable from the public
 # `SqliteDatasetError`. The pin only covers this facade crate; turso's own `turso_core` and
 # `turso_sdk_kit` deps use caret ranges, so keep this on the same `pre` as they resolve to.
-turso = { version = "=0.8.0-pre.8", default-features = false }
+# Moved to =0.8.2: the local cubecl-environment's persistence layer needs ^0.8.2,
+# and one turso must serve both.
+turso = { version = "=0.8.2", default-features = false }
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 zip = "8.6.0"
@@ -225,17 +227,17 @@ burn-vision = { path = "crates/burn-vision", version = "=0.22.0-pre.3", default-
 burn-wgpu = { path = "crates/burn-wgpu", version = "=0.22.0-pre.3", default-features = false }
 
 ### For the main burn branch. ###
-cubecl = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
-cubecl-common = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
-cubecl-environment = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
-cubecl-zspace = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
-cubek = { git = "https://github.com/tracel-ai/cubek", default-features = false, rev = "3a94459a815e3af9c56055a5d201892f608e2845" }
+# cubecl = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
+# cubecl-common = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
+# cubecl-environment = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
+# cubecl-zspace = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "d0052727a3a70970b20945384f337f5051987206" }
+# cubek = { git = "https://github.com/tracel-ai/cubek", default-features = false, rev = "3a94459a815e3af9c56055a5d201892f608e2845" }
 ### For local development. ###
-# cubecl = { path = "../cubecl/crates/cubecl", default-features = false }
-# cubecl-common = { path = "../cubecl/crates/cubecl-common", default-features = false }
-# cubecl-environment = { path = "../cubecl/crates/cubecl-environment", default-features = false }
-# cubecl-zspace = { path = "../cubecl/crates/cubecl-zspace", default-features = false }
-# cubek = { path = "../cubek/crates/cubek", default-features = false }
+cubecl = { path = "../cubecl-burn/crates/cubecl", default-features = false }
+cubecl-common = { path = "../cubecl-burn/crates/cubecl-common", default-features = false }
+cubecl-environment = { path = "../cubecl-burn/crates/cubecl-environment", default-features = false }
+cubecl-zspace = { path = "../cubecl-burn/crates/cubecl-zspace", default-features = false }
+cubek = { path = "../cubek-burn/crates/cubek", default-features = false }
 ### For the release. ###
 # cubecl = { version = "=0.11.0-pre.3", default-features = false }
 # cubecl-common = { version = "=0.11.0-pre.3", default-features = false }
@@ -245,3 +247,31 @@ cubek = { git = "https://github.com/tracel-ai/cubek", default-features = false, 
 
 [profile.dev]
 debug = 1 # Speed up compilation time and not necessary.
+
+# The local cubecl checkout is devin/clif-cpu-jit-burn (burn-pinned rev
+# d0052727 + the Cranelift CPU JIT backport): its backend crates come from
+# haydenflinner/rustc_codegen_pliron at the rev the branch pins. Patch tables
+# are workspace-root only, so the same ones the branch carries are repeated
+# here to keep pliron + vendored Cranelift unified.
+[patch."https://github.com/pliron-org/pliron.git"]
+pliron = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+pliron-derive = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+
+[patch.crates-io]
+pliron = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+pliron-derive = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+pliron-llvm = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+regalloc2 = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-codegen = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-codegen-meta = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-object = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-assembler-x64 = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-assembler-x64-meta = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+rsasm = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+cranelift-interpreter = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
+# x64 call veneers: stock JITModule panics when an extern lands >±2GB from the
+# allocated code (Windows ASLR spreads ucrtbase/the exe that far). The jit
+# crate wasn't vendored until after 86eb3ba, so it comes from the local
+# backend checkout (still 0.135.5).
+cranelift-jit = { path = "../pliron-cubecl/vendor/cranelift-jit" }
+cranelift-reader = { git = "https://github.com/haydenflinner/rustc_codegen_pliron", rev = "86eb3ba9ce9702eda623dbe132948c76e4d5a301" }
