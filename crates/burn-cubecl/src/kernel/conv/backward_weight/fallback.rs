@@ -15,15 +15,12 @@ pub fn conv_weight_backward_fallback<const N_DIM: usize>(
     weight_shape: Shape,
     options: ConvOptions<N_DIM>,
 ) -> Result<CubeTensor, ConvSetupError> {
-    let in_channels = input.meta.shape()[input.rank() - 1];
-
-    // Depthwise is separated out because the general grouped path costs a
-    // kernel per group, and a depthwise convolution has one group per channel.
+    // The depthwise fast path (`conv_weight_grad_depthwise`) produces
+    // wrong — and nondeterministically wrong — gradients on the CPU
+    // runtime, so depthwise goes through the general per-group loop
+    // until the folded-conv bug it hits is found.
     match options.groups {
         1 => conv_weight_grad_no_groups::<N_DIM>(input, output_grad, weight_shape, options),
-        groups if groups == in_channels => {
-            conv_weight_grad_depthwise::<N_DIM>(input, output_grad, weight_shape, options)
-        }
         _ => conv_weight_grad_groups::<N_DIM>(input, output_grad, weight_shape, options),
     }
 }
@@ -47,6 +44,12 @@ pub fn conv_weight_backward_fallback<const N_DIM: usize>(
 /// Restricted to `groups == in_channels`. A group carrying several input
 /// channels needs them kept apart in the result, and a filter sums over every
 /// channel of its group.
+///
+/// Currently unused: it returns wrong (and nondeterministically wrong)
+/// results on the CPU runtime; the dispatch routes through
+/// [`conv_weight_grad_groups`] instead. Kept for re-enabling once the
+/// underlying grouped-conv bug is fixed.
+#[allow(dead_code)]
 fn conv_weight_grad_depthwise<const N_DIM: usize>(
     input: CubeTensor,
     output_grad: CubeTensor,
