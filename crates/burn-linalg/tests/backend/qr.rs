@@ -428,6 +428,49 @@ fn test_qr_4d_12x4_reduced_shape() {
     assert_eq!(r.dims(), [2, 3, 4, 4]);
 }
 
+/// Regression: a matvec on a strided (sliced, non-zero offset) lhs must not
+/// read misaligned lines — cubecl-matmul `gemm`/`gemv` kernels picked a
+/// vector size that didn't divide the row stride and silently loaded the
+/// wrong elements on odd rows.
+#[test]
+fn test_matvec_strided_lhs() {
+    let device = Default::default();
+    // a[i][j] = i*10 + j — every element identifiable
+    let a = TestTensor::<2>::from_data(
+        [
+            [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
+            [10.0, 11.0, 12.0, 13.0, 14.0, 15.0],
+            [20.0, 21.0, 22.0, 23.0, 24.0, 25.0],
+            [30.0, 31.0, 32.0, 33.0, 34.0, 35.0],
+            [40.0, 41.0, 42.0, 43.0, 44.0, 45.0],
+            [50.0, 51.0, 52.0, 53.0, 54.0, 55.0],
+        ],
+        &device,
+    );
+    let w = TestTensor::<2>::from_data([[1.0], [2.0], [3.0], [4.0]], &device);
+    // strided 6x4 view: cols 2..6 of a
+    let s = a.clone().slice(s![.., 2..6]);
+    let got = s.matmul(w.clone());
+    // row i: (10i+2)*1 + (10i+3)*2 + (10i+4)*3 + (10i+5)*4 = 100i+40
+    let want = TestTensor::<2>::from_data(
+        [[40.0], [140.0], [240.0], [340.0], [440.0], [540.0]],
+        &device,
+    );
+    got.into_data()
+        .assert_approx_eq::<FloatElem>(&want.into_data(), Tolerance::default());
+
+    // transposed-view lhs: (4x6)^T -> 6x4, strides (1, 6)
+    let st = a.slice(s![0..4, ..]).transpose();
+    let got = st.matmul(w);
+    // row i: sum_j (10j+i)*(j+1) = 200 + 10i
+    let want = TestTensor::<2>::from_data(
+        [[200.0], [210.0], [220.0], [230.0], [240.0], [250.0]],
+        &device,
+    );
+    got.into_data()
+        .assert_approx_eq::<FloatElem>(&want.into_data(), Tolerance::default());
+}
+
 // ---------------------------------------------------------------------
 // Tensor Check Panics
 // ---------------------------------------------------------------------
