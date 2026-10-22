@@ -243,8 +243,13 @@ impl TensorData {
     /// type, or the stored byte representation is invalid for `E`.
     pub fn as_slice<E: Element>(&self) -> Result<&[E], DataError> {
         if self.matches_target_dtype::<E>() {
-            bytemuck::checked::try_cast_slice(self.bytes.read(Reader::new())?)
-                .map_err(DataError::InvalidRepresentation)
+            let bytes = self.bytes.read(Reader::new())?;
+            // An empty buffer can carry a lower alignment than E and fail
+            // the cast even though there is nothing to cast.
+            if bytes.is_empty() {
+                return Ok(&[]);
+            }
+            bytemuck::checked::try_cast_slice(bytes).map_err(DataError::InvalidRepresentation)
         } else {
             Err(DataError::dtype_mismatch_as::<E>(self.dtype))
         }

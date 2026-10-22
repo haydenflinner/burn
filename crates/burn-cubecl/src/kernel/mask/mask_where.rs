@@ -60,11 +60,13 @@ pub fn mask_where(
 ) -> CubeTensor {
     let vector_size = max_vector_size_many(&[&input, &mask, &value], input.meta.num_dims() - 1);
 
-    let working_units = input.meta.num_elements() / vector_size as usize;
+    let out_shape = broadcast_shape(&[&input, &mask, &value]);
+
+    // The output can be wider than any input after broadcasting, so the
+    // launch must cover the broadcast element count, not `input`'s own.
+    let working_units = out_shape.num_elements().div_ceil(vector_size as usize);
     let cube_dim = CubeDim::new(&input.client, working_units);
     let cube_count = calculate_cube_count_elemwise(&input.client, working_units, cube_dim);
-
-    let out_shape = broadcast_shape(&[&input, &mask, &value]);
 
     // A zero-sized broadcast output has no elements to compute, and the strategies below assume a
     // non-empty output. Return the empty output directly.

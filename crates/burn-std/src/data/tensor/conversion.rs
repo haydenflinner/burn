@@ -85,6 +85,11 @@ impl TensorData {
     /// Returns the tensor data as a vector of scalar values. Does not check dtype.
     fn into_vec_unchecked<E: Element>(self) -> Result<Vec<E>, DataError> {
         let mut me = self;
+        if me.bytes.len() == 0 {
+            // An empty buffer can carry a buffer-level alignment below E's,
+            // which fails the cast below even though there is nothing to cast.
+            return Ok(Vec::new());
+        }
         me.bytes.read(Reader::new())?;
         me.bytes = match me.bytes.try_into_vec::<E>() {
             Ok(elems) => return Ok(elems),
@@ -102,6 +107,11 @@ impl TensorData {
 
     /// Returns an iterator over the values of the tensor data.
     pub fn iter<E: Element>(&self) -> Box<dyn Iterator<Item = E> + '_> {
+        if self.bytes.is_empty() {
+            // An empty buffer can carry a lower alignment than E and fail
+            // the cast even though there is nothing to iterate.
+            return Box::new(std::iter::empty());
+        }
         if E::dtype() == self.dtype {
             Box::new(bytemuck::checked::cast_slice(&self.bytes).iter().copied())
         } else {
