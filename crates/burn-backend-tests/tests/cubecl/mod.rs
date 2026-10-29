@@ -10,6 +10,7 @@ mod contiguous;
 mod conv1d;
 mod conv2d;
 mod conv3d;
+mod conv_depthwise_wgrad;
 mod conv_transpose2d;
 mod conv_transpose3d;
 mod cross;
