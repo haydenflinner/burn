@@ -123,7 +123,7 @@ tracing-subscriber = "0.3.23"
 # builds and the eventual `0.8.x`, and `turso::Error` is reachable from the public
 # `SqliteDatasetError`. The pin only covers this facade crate; turso's own `turso_core` and
 # `turso_sdk_kit` deps use caret ranges, so keep this on the same `pre` as they resolve to.
-turso = { version = "=0.8.0-pre.8", default-features = false }
+turso = { version = "=0.8.2", default-features = false }
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 zip = { version = "8.6.0", default-features = false, features = ["deflate-flate2-zlib-rs"] }
@@ -231,17 +231,17 @@ burn-wgpu = { path = "crates/burn-wgpu", version = "=0.22.0-pre.4", default-feat
 pytorch-reader = { path = "crates/pytorch-reader", version = "=0.22.0-pre.4" }
 
 ### For the main burn branch. ###
-cubecl = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "5e521ef4ee786b1b8bcb1f487cdbd093c1d5d670" }
-cubecl-common = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "5e521ef4ee786b1b8bcb1f487cdbd093c1d5d670" }
-cubecl-environment = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "5e521ef4ee786b1b8bcb1f487cdbd093c1d5d670" }
-cubecl-zspace = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "5e521ef4ee786b1b8bcb1f487cdbd093c1d5d670" }
-cubek = { git = "https://github.com/tracel-ai/cubek", default-features = false, rev = "a8207f822e07eaaed1480965c55c5b8864339e1b" }
+# cubecl = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "5e521ef4ee786b1b8bcb1f487cdbd093c1d5d670" }
+# cubecl-common = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "5e521ef4ee786b1b8bcb1f487cdbd093c1d5d670" }
+# cubecl-environment = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "5e521ef4ee786b1b8bcb1f487cdbd093c1d5d670" }
+# cubecl-zspace = { git = "https://github.com/tracel-ai/cubecl", default-features = false, rev = "5e521ef4ee786b1b8bcb1f487cdbd093c1d5d670" }
+# cubek = { git = "https://github.com/tracel-ai/cubek", default-features = false, rev = "a8207f822e07eaaed1480965c55c5b8864339e1b" }
 ### For local development. ###
-# cubecl = { path = "../cubecl/crates/cubecl", default-features = false }
-# cubecl-common = { path = "../cubecl/crates/cubecl-common", default-features = false }
-# cubecl-environment = { path = "../cubecl/crates/cubecl-environment", default-features = false }
-# cubecl-zspace = { path = "../cubecl/crates/cubecl-zspace", default-features = false }
-# cubek = { path = "../cubek/crates/cubek", default-features = false }
+cubecl = { path = "/Users/wow/code/cubecl/crates/cubecl", default-features = false }
+cubecl-common = { path = "/Users/wow/code/cubecl/crates/cubecl-common", default-features = false }
+cubecl-environment = { path = "/Users/wow/code/cubecl/crates/cubecl-environment", default-features = false }
+cubecl-zspace = { path = "/Users/wow/code/cubecl/crates/cubecl-zspace", default-features = false }
+cubek = { path = "/Users/wow/code/cubek/crates/cubek", default-features = false }
 ### For the release. ###
 # cubecl = { version = "=0.11.0-pre.4", default-features = false }
 # cubecl-common = { version = "=0.11.0-pre.4", default-features = false }
@@ -251,3 +251,27 @@ cubek = { git = "https://github.com/tracel-ai/cubek", default-features = false, 
 
 [profile.dev]
 debug = 1 # Speed up compilation time and not necessary.
+
+# pliron-spirv pins upstream pliron; point it at the same pliron as the rest of the workspace.
+[patch."https://github.com/pliron-org/pliron.git"]
+pliron = { version = "0.19" }
+pliron-derive = { version = "0.19" }
+
+# Route everything through rustc_codegen_pliron's vendored forks so the same
+# `pliron`/`cranelift` types unify with `pliron-clif-lower` (CUBECL_PLIRON_CLIF
+# JIT path in cubecl-llvm). Vendored crates carry perf patches on top of the
+# same upstream revs; APIs are unchanged.
+# LOCAL (pliron/kernel-jit): paths below point at one rustc_codegen_pliron checkout (docs/cubecl-burn.md)
+[patch.crates-io]
+pliron = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/pliron" }
+pliron-llvm = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/pliron/pliron-llvm" }
+pliron-derive = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/pliron/pliron-derive" }
+regalloc2 = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/regalloc2" }
+cranelift-codegen = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/cranelift-codegen" }
+cranelift-codegen-meta = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/cranelift-codegen-meta" }
+cranelift-object = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/cranelift-object" }
+cranelift-assembler-x64 = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/cranelift-assembler-x64" }
+cranelift-assembler-x64-meta = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/cranelift-assembler-x64-meta" }
+cranelift-interpreter = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/cranelift-interpreter" }
+cranelift-reader = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/cranelift-reader" }
+rsasm = { path = "/Users/wow/code/purerust/rustc_codegen_pliron/.claude/worktrees/agent-a5b6f3bbe42f9acb7/vendor/rsasm" }

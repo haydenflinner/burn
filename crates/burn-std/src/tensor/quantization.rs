@@ -15,7 +15,15 @@ pub const QPARAM_ALIGN: usize = core::mem::align_of::<f32>();
 use alloc::vec::Vec;
 use core::any::TypeId;
 use cubecl_common::e4m3;
-use cubecl_common::quant::scheme::{f32_to_ue8m0, ue8m0_to_f32};
+use cubecl_common::ue8m0;
+
+fn f32_to_ue8m0(s: f32) -> u8 {
+    ue8m0::from_f32(s).to_bits()
+}
+
+fn ue8m0_to_f32(b: u8) -> f32 {
+    ue8m0::from_bits(b).to_f32()
+}
 use num_traits::PrimInt;
 use serde::{Deserialize, Serialize};
 
